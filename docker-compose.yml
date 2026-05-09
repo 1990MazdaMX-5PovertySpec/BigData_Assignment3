@@ -1,0 +1,22 @@
+services:
+  mongo1:
+    image: mongo:7.0
+    container_name: mongo1
+    # We force the container to use a specific port to align with your Mac's ports
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - "27017:27017"
+
+  mongo2:
+    image: mongo:7.0
+    container_name: mongo2
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
+    ports:
+      - "27018:27018"
+
+  mongo3:
+    image: mongo:7.0
+    container_name: mongo3
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
+    ports:
+      - "27019:27019"
