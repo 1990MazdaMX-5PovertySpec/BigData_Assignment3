@@ -1,0 +1,6 @@
+sh.addShard("shard1RS/shard1a:27017,shard1b:27017,shard1c:27017")
+sh.addShard("shard2RS/shard2a:27017,shard2b:27017,shard2c:27017")
+sh.addShard("shard3RS/shard3a:27017,shard3b:27017,shard3c:27017")
+sh.enableSharding("mydb")
+sh.shardCollection("mydb.ais_data", { MMSI: "hashed" })
+sh.status()

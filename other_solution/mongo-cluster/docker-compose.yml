@@ -1,0 +1,188 @@
+version: '3.8'
+
+services:
+
+  # ──────────────────────────────────────────
+  # Config Server Replica Set (3 nodes)
+  # ──────────────────────────────────────────
+  configsvr1:
+    image: mongo:7
+    container_name: configsvr1
+    command: mongod --configsvr --replSet configRS --port 27017 --bind_ip_all
+    ports:
+      - "27019:27017"
+    volumes:
+      - configsvr1_data:/data/db
+    networks:
+      - mongo-cluster
+
+  configsvr2:
+    image: mongo:7
+    container_name: configsvr2
+    command: mongod --configsvr --replSet configRS --port 27017 --bind_ip_all
+    ports:
+      - "27020:27017"
+    volumes:
+      - configsvr2_data:/data/db
+    networks:
+      - mongo-cluster
+
+  configsvr3:
+    image: mongo:7
+    container_name: configsvr3
+    command: mongod --configsvr --replSet configRS --port 27017 --bind_ip_all
+    ports:
+      - "27023:27017"
+    volumes:
+      - configsvr3_data:/data/db
+    networks:
+      - mongo-cluster
+
+  # ──────────────────────────────────────────
+  # Shard 1 Replica Set (3 nodes)
+  # ──────────────────────────────────────────
+  shard1a:
+    image: mongo:7
+    container_name: shard1a
+    command: mongod --shardsvr --replSet shard1RS --port 27017 --bind_ip_all
+    ports:
+      - "27021:27017"
+    volumes:
+      - shard1a_data:/data/db
+    networks:
+      - mongo-cluster
+
+  shard1b:
+    image: mongo:7
+    container_name: shard1b
+    command: mongod --shardsvr --replSet shard1RS --port 27017 --bind_ip_all
+    ports:
+      - "27024:27017"
+    volumes:
+      - shard1b_data:/data/db
+    networks:
+      - mongo-cluster
+
+  shard1c:
+    image: mongo:7
+    container_name: shard1c
+    command: mongod --shardsvr --replSet shard1RS --port 27017 --bind_ip_all
+    ports:
+      - "27025:27017"
+    volumes:
+      - shard1c_data:/data/db
+    networks:
+      - mongo-cluster
+
+  # ──────────────────────────────────────────
+  # Shard 2 Replica Set (3 nodes)
+  # ──────────────────────────────────────────
+  shard2a:
+    image: mongo:7
+    container_name: shard2a
+    command: mongod --shardsvr --replSet shard2RS --port 27017 --bind_ip_all
+    ports:
+      - "27022:27017"
+    volumes:
+      - shard2a_data:/data/db
+    networks:
+      - mongo-cluster
+
+  shard2b:
+    image: mongo:7
+    container_name: shard2b
+    command: mongod --shardsvr --replSet shard2RS --port 27017 --bind_ip_all
+    ports:
+      - "27026:27017"
+    volumes:
+      - shard2b_data:/data/db
+    networks:
+      - mongo-cluster
+
+  shard2c:
+    image: mongo:7
+    container_name: shard2c
+    command: mongod --shardsvr --replSet shard2RS --port 27017 --bind_ip_all
+    ports:
+      - "27027:27017"
+    volumes:
+      - shard2c_data:/data/db
+    networks:
+      - mongo-cluster
+
+  # ──────────────────────────────────────────
+  # Shard 3 Replica Set (3 nodes)
+  # ──────────────────────────────────────────
+  shard3a:
+    image: mongo:7
+    container_name: shard3a
+    command: mongod --shardsvr --replSet shard3RS --port 27017 --bind_ip_all
+    ports:
+      - "27028:27017"
+    volumes:
+      - shard3a_data:/data/db
+    networks:
+      - mongo-cluster
+
+  shard3b:
+    image: mongo:7
+    container_name: shard3b
+    command: mongod --shardsvr --replSet shard3RS --port 27017 --bind_ip_all
+    ports:
+      - "27029:27017"
+    volumes:
+      - shard3b_data:/data/db
+    networks:
+      - mongo-cluster
+
+  shard3c:
+    image: mongo:7
+    container_name: shard3c
+    command: mongod --shardsvr --replSet shard3RS --port 27017 --bind_ip_all
+    ports:
+      - "27030:27017"
+    volumes:
+      - shard3c_data:/data/db
+    networks:
+      - mongo-cluster
+
+  # ──────────────────────────────────────────
+  # mongos Router
+  # ──────────────────────────────────────────
+  mongos:
+    image: mongo:7
+    container_name: mongos
+    command: >
+      mongos
+      --configdb configRS/configsvr1:27017,configsvr2:27017,configsvr3:27017
+      --bind_ip_all
+      --port 27017
+    ports:
+      - "27017:27017"
+    depends_on:
+      - configsvr1
+      - configsvr2
+      - configsvr3
+      - shard1a
+      - shard2a
+      - shard3a
+    networks:
+      - mongo-cluster
+
+volumes:
+  configsvr1_data:
+  configsvr2_data:
+  configsvr3_data:
+  shard1a_data:
+  shard1b_data:
+  shard1c_data:
+  shard2a_data:
+  shard2b_data:
+  shard2c_data:
+  shard3a_data:
+  shard3b_data:
+  shard3c_data:
+
+networks:
+  mongo-cluster:
+    driver: bridge
